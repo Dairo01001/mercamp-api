@@ -7,8 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       String @id @default(uuid()) @map("id_user")
-  username String @unique @map("username_user")
-  password String @map("password_user")
+model users {
+  id        String   @id @default(uuid()) @map("id_user")
+  username  String   @map("username_user")
+  email     String   @unique @map("email_user")
+  password  String   @map("password_user")
+  isAdmin   Boolean  @default(false) @map("is_admin_user")
+  createdAt DateTime @default(now()) @map("created_at_user")
+  updatedAt DateTime @updatedAt @map("updated_at_user")
 }
