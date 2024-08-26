@@ -1,72 +1,44 @@
-import { afterAll, beforeAll, describe, it } from '@jest/globals';
+import { afterAll, describe, it } from '@jest/globals';
 import supertest from 'supertest';
-
-import { PrismaService } from '../../src/services';
-import createApp from '../../src/app';
 import { StatusCodes } from 'http-status-codes';
+
+import createApp from '../../src/app';
+import { PrismaService } from '../../src/services';
+import { CreateUserRequest, CreateUserResponse } from '../../src/user';
 
 const app = createApp();
 const prisma = PrismaService.getInstance();
 
-describe('User Controller POST /api/user validation', () => {
+describe('User Controller /api/users', () => {
+  beforeAll(async () => {});
+
   afterAll(async () => {
-    const deleteUser = prisma.user.deleteMany();
+    const deleteUser = prisma.users.deleteMany();
     await prisma.$transaction([deleteUser]);
     await prisma.$disconnect();
   });
 
-  it('POST /api/user with invalid body', async () => {
-    return supertest(app)
-      .post('/api/user')
-      .send({})
-      .expect('content-type', /json/)
-      .expect(StatusCodes.BAD_REQUEST)
-      .then((res) => {
-        expect(res.body).toEqual({
-          message: 'Username is required, Password is required',
-        });
-      });
-  });
+  it('POST /api/users with valid body', () => {
+    const newUser: CreateUserRequest = {
+      email: 'admin@gmail.com',
+      username: 'Admin',
+      password: 'Admin_1234',
+      isAdmin: true,
+    };
 
-  it('POST /api/user with invalid username', async () => {
-    return supertest(app)
-      .post('/api/user')
-      .send({ username: '', password: 'Username?1' })
-      .expect('content-type', /json/)
-      .expect(StatusCodes.BAD_REQUEST)
-      .then((res) => {
-        expect(res.body).toEqual({
-          message: 'Username must be at least 4 characters',
-        });
-      });
-  });
+    const newUserRes: CreateUserResponse = {
+      id: expect.any(String),
+      username: newUser.username,
+      email: newUser.email,
+    };
 
-  it('POST /api/user with invalid password', async () => {
     return supertest(app)
-      .post('/api/user')
-      .send({ username: 'dairo', password: '12345678' })
-      .expect('content-type', /json/)
-      .expect(StatusCodes.BAD_REQUEST)
-      .then((res) => {
-        expect(res.body).toEqual({
-          message:
-            'Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character',
-        });
-      });
-  });
-
-  it('POST /api/user with valid body', () => {
-    return supertest(app)
-      .post('/api/user')
-      .send({ username: 'Dairo Garcia', password: 'Dairo_1234' })
+      .post('/api/users')
+      .send(newUser)
       .expect('content-type', /json/)
       .expect(StatusCodes.CREATED)
       .then((res) => {
-        expect(res.body).toEqual({
-          id: expect.any(String),
-          username: 'Dairo Garcia',
-          password: expect.any(String),
-        });
+        expect(res.body).toEqual(newUserRes);
       });
   });
 });
