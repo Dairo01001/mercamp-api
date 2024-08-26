@@ -1,6 +1,11 @@
-import e, { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { AnyZodObject, ZodError } from 'zod';
+
+interface IError {
+  label: string;
+  message: string;
+}
 
 export const validateResource = (schema: AnyZodObject) => (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -12,9 +17,12 @@ export const validateResource = (schema: AnyZodObject) => (req: Request, res: Re
     next();
   } catch (error) {
     if (error instanceof ZodError) {
-      const message = error.errors.map((error) => error.message).join(', ');
+      const errors: IError[] = error.issues.map((issue) => ({
+        label: String(issue.path[1]),
+        message: issue.message,
+      }));
 
-      res.status(StatusCodes.BAD_REQUEST).json({ message });
+      res.status(StatusCodes.BAD_REQUEST).json(errors);
     }
   }
 };

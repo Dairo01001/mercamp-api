@@ -1,5 +1,5 @@
 import createApp from './app';
-import { logger } from './services';
+import { logger } from './shared';
 const app = createApp();
 
 app.listen(app.get('port'), () => {

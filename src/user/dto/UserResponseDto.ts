@@ -1,4 +1,4 @@
-import { users } from '@prisma/client';
+import { User } from '../models';
 
 export class UserResponseDto {
   id: string;
@@ -11,7 +11,7 @@ export class UserResponseDto {
     this.email = email;
   }
 
-  static fromPrisma(user: users): UserResponseDto {
+  static fromUser(user: User): UserResponseDto {
     return new UserResponseDto(user.id, user.username, user.email);
   }
 }
