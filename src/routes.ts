@@ -6,7 +6,7 @@ const routes = (app: Application) => {
     res.status(200).send('Hello World!');
   });
 
-  app.use('/api/user', userRoutes());
+  app.use('/api/users', userRoutes());
 };
 
 export default routes;

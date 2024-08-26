@@ -1,4 +1,4 @@
-import { User } from '../models';
+import { CreateUserResponse } from '../models';
 import { CreateUserInput } from '../schemas';
 import { PrismaService } from '../../services';
 import { HttpRequestError } from '../../utils';
@@ -6,25 +6,24 @@ import { StatusCodes } from 'http-status-codes';
 
 const prisma = PrismaService.getInstance();
 
-export const createUser = async (user: CreateUserInput['body']): Promise<User> => {
-  const { username, password } = user;
-
-  const userExists = await prisma.user.findUnique({
+export const createUser = async (newUser: CreateUserInput['body']): Promise<CreateUserResponse> => {
+  const userExists = await prisma.users.findUnique({
     where: {
-      username,
+      email: newUser.email,
     },
   });
 
   if (userExists) {
-    throw new HttpRequestError('Username already exists', StatusCodes.CONFLICT);
+    throw new HttpRequestError('Email already exists', StatusCodes.CONFLICT);
   }
 
-  const newUser = await prisma.user.create({
-    data: {
-      username,
-      password,
-    },
+  const createdUser = await prisma.users.create({
+    data: newUser,
   });
 
-  return newUser;
+  return {
+    id: createdUser.id,
+    username: createdUser.username,
+    email: createdUser.email,
+  };
 };
