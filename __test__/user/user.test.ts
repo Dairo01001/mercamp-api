@@ -1,4 +1,4 @@
-import { afterAll, describe, it } from '@jest/globals';
+import { describe, it } from '@jest/globals';
 import supertest from 'supertest';
 import { StatusCodes } from 'http-status-codes';
 
@@ -9,23 +9,26 @@ import { PrismaService } from '../../src/shared';
 const app = createApp();
 const prisma = PrismaService.getInstance();
 
-describe('User Controller /api/users', () => {
-  beforeAll(async () => {
-    await prisma.users.create({
-      data: {
+beforeEach(async () => {
+  await prisma.users.createMany({
+    data: [
+      {
         email: 'dairo@gmail.com',
         username: 'Dairo',
         password: 'Dairo_1234',
       },
-    });
+    ],
+    skipDuplicates: true,
   });
+});
 
-  afterAll(async () => {
-    const deleteUser = prisma.users.deleteMany();
-    await prisma.$transaction([deleteUser]);
-    await prisma.$disconnect();
-  });
+afterEach(async () => {
+  const deleteUser = prisma.users.deleteMany();
+  await prisma.$transaction([deleteUser]);
+  await prisma.$disconnect();
+});
 
+describe('User Controller /api/users', () => {
   it('POST /api/users with valid body', () => {
     const newUser: ICreateUserRequest = {
       email: 'admin@gmail.com',
