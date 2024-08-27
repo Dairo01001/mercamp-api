@@ -1,4 +1,4 @@
-import { User } from '../models';
+import { IUser } from '../models';
 
 export class UserResponseDto {
   id: string;
@@ -11,7 +11,7 @@ export class UserResponseDto {
     this.email = email;
   }
 
-  static fromUser(user: User): UserResponseDto {
+  static fromUser(user: IUser): UserResponseDto {
     return new UserResponseDto(user.id, user.username, user.email);
   }
 }

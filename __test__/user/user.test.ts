@@ -3,7 +3,7 @@ import supertest from 'supertest';
 import { StatusCodes } from 'http-status-codes';
 
 import createApp from '../../src/app';
-import { CreatedUserResponse, CreateUserRequest } from '../../src/user';
+import { ICreatedUserResponse, ICreateUserRequest } from '../../src/user';
 import { PrismaService } from '../../src/shared';
 
 const app = createApp();
@@ -27,13 +27,13 @@ describe('User Controller /api/users', () => {
   });
 
   it('POST /api/users with valid body', () => {
-    const newUser: CreateUserRequest = {
+    const newUser: ICreateUserRequest = {
       email: 'admin@gmail.com',
       username: 'Admin',
       password: 'Admin_1234',
     };
 
-    const newUserRes: CreatedUserResponse = {
+    const newUserRes: ICreatedUserResponse = {
       id: expect.any(String),
       username: newUser.username,
       email: newUser.email,

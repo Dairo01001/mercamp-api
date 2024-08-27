@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import { validateResource } from '../../middlewares';
 import { createUserSchema } from '../schemas';
-import userController from '../controller/UserController';
+import { createUserHandler } from '../controller';
 
 export const userRoutes = (): Router => {
   const router = Router();
 
-  router.post('/', validateResource(createUserSchema), userController.createUser);
+  router.post('/', validateResource(createUserSchema), createUserHandler);
 
   return router;
 };

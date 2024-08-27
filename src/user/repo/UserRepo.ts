@@ -1,23 +1,18 @@
-import { INewUser, User } from '../models';
+import { INewUser, IUser } from '../models';
 import { PrismaService } from '../../shared';
 
 const prisma = PrismaService.getInstance();
 
-const createUser = async (newUser: INewUser): Promise<User> => {
+export const createUser = async (newUser: INewUser): Promise<IUser> => {
   return prisma.users.create({
     data: newUser,
   });
 };
 
-const exists = async (email: string): Promise<boolean> => {
+export const userExists = async (email: string): Promise<boolean> => {
   return !!(await prisma.users.findUnique({
     where: {
       email: email,
     },
   }));
-};
-
-export default {
-  createUser,
-  exists,
 };

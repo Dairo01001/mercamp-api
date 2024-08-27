@@ -1,20 +1,16 @@
 import { StatusCodes } from 'http-status-codes';
 import { HttpRequestError } from '../../utils';
 import { UserResponseDto } from '../dto';
-import { CreateUserRequest } from '../models';
-import userRepo from '../repo/UserRepo';
+import { ICreateUserRequest } from '../models';
+import { createUser, userExists } from '../repo';
 
-const createUser = async (newUser: CreateUserRequest): Promise<UserResponseDto> => {
-  const exists = await userRepo.exists(newUser.email);
+export const createUserService = async (newUser: ICreateUserRequest): Promise<UserResponseDto> => {
+  const exists = await userExists(newUser.email);
 
   if (exists) {
     throw new HttpRequestError('Email already exists', StatusCodes.CONFLICT);
   }
-  const user = await userRepo.createUser(newUser);
+  const user = await createUser(newUser);
 
   return UserResponseDto.fromUser(user);
-};
-
-export default {
-  createUser,
 };

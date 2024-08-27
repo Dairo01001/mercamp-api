@@ -1,4 +1,4 @@
-export interface CreateUserRequest {
+export interface ICreateUserRequest {
   email: string;
   username: string;
   password: string;
@@ -10,7 +10,7 @@ export interface INewUser {
   password: string;
 }
 
-export interface User {
+export interface IUser {
   id: string;
   username: string;
   email: string;
@@ -20,7 +20,7 @@ export interface User {
   updatedAt: Date;
 }
 
-export interface CreatedUserResponse {
+export interface ICreatedUserResponse {
   id: string;
   username: string;
   email: string;
