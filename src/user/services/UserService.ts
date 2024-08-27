@@ -1,8 +1,8 @@
 import { StatusCodes } from 'http-status-codes';
-import { hashedPassword, HttpRequestError } from '../../utils';
+import { comparePassword, hashedPassword, HttpRequestError } from '../../utils';
 import { UserResponseDto } from '../dto';
-import { ICreateUserRequest } from '../models';
-import { createUser, userExists } from '../repo';
+import { ICreateUserRequest, IUser } from '../models';
+import { createUser, findUserByEmail, userExists } from '../repo';
 
 export const createUserService = async (newUser: ICreateUserRequest): Promise<UserResponseDto> => {
   const exists = await userExists(newUser.email);
@@ -15,4 +15,20 @@ export const createUserService = async (newUser: ICreateUserRequest): Promise<Us
   const user = await createUser(newUser);
 
   return UserResponseDto.fromUser(user);
+};
+
+export const validatePassword = async ({ email, password }: { email: string; password: string }): Promise<IUser> => {
+  const user = await findUserByEmail(email);
+
+  if (!user) {
+    throw new HttpRequestError('User not found', StatusCodes.NOT_FOUND);
+  }
+
+  const isValid = await comparePassword(password, user.password);
+
+  if (!isValid) {
+    throw new HttpRequestError('Invalid password', StatusCodes.UNAUTHORIZED);
+  }
+
+  return user;
 };

@@ -30,7 +30,7 @@ afterEach(async () => {
 });
 
 describe('SignIn Test ', () => {
-  it('POST /auth/signin', async () => {
+  it('POST /auth/signin should return token and refresh token', async () => {
     const user: IAuth = {
       email: 'dairo@gmail.com',
       password: 'Dairo_1234',
@@ -44,6 +44,31 @@ describe('SignIn Test ', () => {
         expect(res.body).toEqual({
           token: expect.any(String),
           refreshToken: expect.any(String),
+        });
+      });
+  });
+
+  it('GET /auth/me should return 401 if token is invalid', async () => {
+    return supertest(app).get('/auth/me').set('Authorization', 'Bearer invalid-token').expect(StatusCodes.UNAUTHORIZED);
+  });
+
+  it('GET /auth/me should return user info', async () => {
+    const user: IAuth = {
+      email: 'dairo@gmail.com',
+      password: 'Dairo_1234',
+    };
+
+    const token = await supertest(app).post('/auth/signin').send(user).expect(StatusCodes.OK);
+
+    return supertest(app)
+      .get('/auth/me')
+      .set('Authorization', `Bearer ${token.body.token}`)
+      .expect(StatusCodes.OK)
+      .then((res) => {
+        expect(res.body).toEqual({
+          id: expect.any(String),
+          username: 'dairo',
+          isAdmin: false,
         });
       });
   });

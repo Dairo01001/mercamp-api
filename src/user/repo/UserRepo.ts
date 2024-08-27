@@ -16,3 +16,11 @@ export const userExists = async (email: string): Promise<boolean> => {
     },
   }));
 };
+
+export const findUserByEmail = async (email: string): Promise<IUser | null> => {
+  return prisma.users.findUnique({
+    where: {
+      email: email,
+    },
+  });
+};

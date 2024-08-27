@@ -15,3 +15,7 @@ export const createUserHandler = async (
     requestFail(res, error);
   }
 };
+
+export const getCurrentUserHandler = async (req: Request, res: Response) => {
+  return res.send(res.locals.user);
+};
