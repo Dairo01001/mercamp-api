@@ -30,14 +30,14 @@ afterEach(async () => {
 });
 
 describe('SignIn Test ', () => {
-  it('POST /auth/signin should return token and refresh token', async () => {
+  it('POST /api/auth/signin should return token and refresh token', async () => {
     const user: IAuth = {
       email: 'dairo@gmail.com',
       password: 'Dairo_1234',
     };
 
     return supertest(app)
-      .post('/auth/signin')
+      .post('/api/auth/signin')
       .send(user)
       .expect(StatusCodes.OK)
       .then((res) => {
@@ -48,20 +48,23 @@ describe('SignIn Test ', () => {
       });
   });
 
-  it('GET /auth/me should return 401 if token is invalid', async () => {
-    return supertest(app).get('/auth/me').set('Authorization', 'Bearer invalid-token').expect(StatusCodes.UNAUTHORIZED);
+  it('GET /api/auth should return 401 if token is invalid', async () => {
+    return supertest(app)
+      .get('/api/auth')
+      .set('Authorization', 'Bearer invalid-token')
+      .expect(StatusCodes.UNAUTHORIZED);
   });
 
-  it('GET /auth/me should return user info', async () => {
+  it('GET /api/auth should return user info', async () => {
     const user: IAuth = {
       email: 'dairo@gmail.com',
       password: 'Dairo_1234',
     };
 
-    const token = await supertest(app).post('/auth/signin').send(user).expect(StatusCodes.OK);
+    const token = await supertest(app).post('/api/auth/signin').send(user).expect(StatusCodes.OK);
 
     return supertest(app)
-      .get('/auth/me')
+      .get('/api/auth')
       .set('Authorization', `Bearer ${token.body.token}`)
       .expect(StatusCodes.OK)
       .then((res) => {
@@ -73,13 +76,13 @@ describe('SignIn Test ', () => {
       });
   });
 
-  it('POST /auth/signin with invalid body', async () => {
+  it('POST /api/auth/signin with invalid body', async () => {
     const user = {
       password: 'Dairo_1234',
     };
 
     return supertest(app)
-      .post('/auth/signin')
+      .post('/api/auth/signin')
       .send(user)
       .expect(StatusCodes.BAD_REQUEST)
       .then((res) => {
@@ -89,14 +92,14 @@ describe('SignIn Test ', () => {
       });
   });
 
-  it('POST /auth/signin with invalid email', async () => {
+  it('POST /api/auth/signin with invalid email', async () => {
     const user = {
       email: 'dairogmail.com',
       password: 'Dairo_1234',
     };
 
     return supertest(app)
-      .post('/auth/signin')
+      .post('/api/auth/signin')
       .send(user)
       .expect(StatusCodes.BAD_REQUEST)
       .then((res) => {

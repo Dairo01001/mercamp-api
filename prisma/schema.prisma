@@ -7,12 +7,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model sessions {
+  id        String  @id @default(uuid()) @map("id_session")
+  valid     Boolean @default(false) @map("valid_session")
+  userAgent String  @map("user_agent_session")
+
+  createdAt DateTime @default(now()) @map("created_at_session")
+  updatedAt DateTime @updatedAt @map("updated_at_session")
+
+  userId String @map("user_id_session")
+  user   users  @relation(fields: [userId], references: [id])
+}
+
 model users {
-  id        String   @id @default(uuid()) @map("id_user")
-  username  String   @map("username_user")
-  email     String   @unique @map("email_user")
-  password  String   @map("password_user")
-  isAdmin   Boolean  @default(false) @map("is_admin_user")
+  id       String  @id @default(uuid()) @map("id_user")
+  username String  @map("username_user")
+  email    String  @unique @map("email_user")
+  password String  @map("password_user")
+  isAdmin  Boolean @default(false) @map("is_admin_user")
+
   createdAt DateTime @default(now()) @map("created_at_user")
   updatedAt DateTime @updatedAt @map("updated_at_user")
+
+  sessions sessions[]
 }

@@ -8,7 +8,7 @@ const routes = (app: Application) => {
   });
 
   app.use('/api/users', userRoutes());
-  app.use('/auth', authRoutes());
+  app.use('/api/auth', authRoutes());
 };
 
 export default routes;
